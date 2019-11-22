@@ -25,7 +25,7 @@ module Enumerable
   #my_each_with_index
 
   def my_each_with_index
-    return self.to_enum if !block_given?
+    return self.to_enum unless block_given?
     if self.class == Array
       i = 0
       while i < self.length
@@ -47,7 +47,7 @@ module Enumerable
   #my_select
 
   def my_select
-    return self.to_enum if !block_given?
+    return self.to_enum unless block_given?
     new_arr = []
     i = 0
     while i < self.size
