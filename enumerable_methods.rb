@@ -157,5 +157,19 @@ module Enumerable
     arr
   end
 
+  #my_inject
+
+  def my_inject *initial
+    result = nil
+    arr = self.to_a
+    result = initial[0].nil? ? arr[0] : initial[0]
+    arr.shift if initial[0].nil?
+    length = arr.size - 1
+    arr.length.times do |i|
+      result = yield(result, arr[i])
+    end
+    result
+  end
+
 end
 
