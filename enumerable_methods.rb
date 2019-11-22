@@ -79,6 +79,27 @@ module Enumerable
     true
   end
 
+  #my_any
+
+  def my_any?
+    if !block_given?
+      return self.my_any? { |obj| obj }
+    end
+    if self.class == Array
+      length = self.size
+      self.length.times do |i|
+        return true if yield(self[i])
+      end
+    elsif self.class == Hash
+      keys = self.keys
+      keys.length.times do |i|
+        return true if yield(keys[i], self[keys[i]])
+      end
+    end
+    false
+  end
+
+
 
 end
 
