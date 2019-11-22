@@ -59,5 +59,26 @@ module Enumerable
     new_arr
   end
 
+  #my_all
+
+  def my_all?
+    if !block_given?
+      return self.my_all? { |obj| obj }
+    end
+    if self.class == Array
+      length = self.size - 1
+      self.length.times do |i|
+        return false unless yield(self[i])
+      end
+    elsif self.class == Hash
+      keys = self.keys
+      self.length.times do |i|
+        return false unless yield(keys[i], self[keys[i]])
+      end
+    end
+    true
+  end
+
+
 end
 
