@@ -60,29 +60,30 @@ module Enumerable
   # my_all
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all?(pattern = nil)
+    arr = self
     if !block_given? && pattern.nil?
-      length.times do |i|
+      arr.my_each do |i|
         return false unless i
       end
     elsif self.class == Array
-      length.times do |i|
+      arr.my_each do |i|
         return false unless yield(self[i])
       end
     elsif self.class == Hash
       keys = self.keys
-      length.times do |i|
+      arr.my_each do |i|
         return false unless yield(keys[i], self[keys[i]])
       end
     elsif pattern.is_a? Regexp
-      length.times do |i|
+      arr.my_each do |i|
         return false unless i =~ pattern
       end
     elsif pattern.is_a? Class
-      length.times do |i|
+      arr.my_each do |i|
         return false unless i.is_a? pattern
       end
     elsif pattern
-      length.times do |i|
+      arr.my_each do |i|
         return false unless i == pattern
       end
     end
@@ -93,29 +94,30 @@ module Enumerable
   # my_any
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_any?(pattern = nil)
+    arr = self
     if !block_given? && pattern.nil?
-      length.times do |i|
+      arr.my_each do |i|
         return true if i
       end
     elsif self.class == Array
-      length.times do |i|
+      arr.my_each do |i|
         return true if yield(self[i])
       end
     elsif self.class == Hash
       keys = self.keys
-      keys.length.times do |i|
+      arr.my_each do |i|
         return true if yield(keys[i], self[keys[i]])
       end
     elsif pattern.is_a? Regexp
-      length.times do |i|
+      arr.my_each do |i|
         return true if i =~ pattern
       end
     elsif pattern.is_a? Class
-      length.times do |i|
+      arr.my_each do |i|
         return true if i.is_a? pattern
       end
     elsif pattern
-      length.times do |i|
+      arr.my_each do |i|
         return true if i == pattern
       end
     end
@@ -126,29 +128,30 @@ module Enumerable
   # my_none
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_none?(pattern = nil)
+    arr = self
     if !block_given? && pattern.nil?
-      length.times do |i|
+      arr.my_each do |i|
         return false if i
       end
     elsif self.class == Array
-      length.times do |i|
+      arr.my_each do |i|
         return false if yield(self[i])
       end
     elsif self.class == Hash
       keys = self.keys
-      keys.length.times do |i|
+      arr.my_each do |i|
         return false if yield(keys[i], self[keys[i]])
       end
     elsif pattern.is_a? Regexp
-      length.times do |i|
+      arr.my_each do |i|
         return false if i =~ pattern
       end
     elsif pattern.is_a? Class
-      length.times do |i|
+      arr.my_each do |i|
         return false if i.is_a? pattern
       end
     elsif pattern
-      length.times do |i|
+      arr.my_each do |i|
         return false if i == pattern
       end
     end
@@ -207,7 +210,7 @@ module Enumerable
       arr = dup.to_a
       result = initial[0].nil? ? arr[0] : initial[0]
       arr.shift if initial[0].nil?
-      arr.length.times do |i|
+      arr.my_each do |i|
         result = yield(result, i)
       end
     elsif !block_given?
