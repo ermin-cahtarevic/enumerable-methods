@@ -171,5 +171,24 @@ module Enumerable
     result
   end
 
+  #my_map
+
+  def my_map(param = nil)
+    if !block_given?
+      return my_map { |obj| obj }
+    end
+    i = 0
+    arr = []
+    while i < self.size
+      if block_given? && param == nil
+        arr << yield(self[i])
+      elsif block_given? && param
+        arr << param.call(self[i])
+      end
+      i += 1
+    end
+    arr
+  end
+  
 end
 
