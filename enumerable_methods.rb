@@ -44,5 +44,20 @@ module Enumerable
     self
   end
 
+  #my_select
+
+  def my_select
+    return self.to_enum if !block_given?
+    new_arr = []
+    i = 0
+    while i < self.size
+      if yield(self[i])
+        new_arr << self[i]
+      end
+      i += 1
+    end
+    new_arr
+  end
+
 end
 
