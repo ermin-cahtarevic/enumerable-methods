@@ -119,6 +119,29 @@ module Enumerable
     true
   end
 
+  # my_count
+
+  def my_count(arg = nil)
+    return length unless block_given? || !arg.nil?
+
+    counter = 0
+    if !arg.nil?
+      self.my_each do |i|
+        counter += 1 if i == arg
+      end
+    elsif self.class == Array
+      self.my_each do |i|
+        counter += 1 if yield(i)
+      end
+    elsif self.class == Hash
+      keys = self.keys
+      self.my_each do |i|
+        counter += 1 if yield(keys[i], self[keys[i]])
+      end
+    end
+    counter
+  end
+
 
 end
 
