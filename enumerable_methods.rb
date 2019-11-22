@@ -3,7 +3,8 @@
 module Enumerable
   # my_each
   def my_each
-    return .to_enum unless block_given?
+    return to_enum unless block_given?
+
     if self.class == Array
       i = 0
       while i < length
@@ -57,10 +58,13 @@ module Enumerable
   end
 
   # my_all
-  def my_all?
-    return my_all? { |obj| obj } unless block_given?
-
-    if self.class == Array
+  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
+  def my_all?(pattern = nil)
+    if !block_given? && pattern.nil?
+      length.times do |i|
+        return false unless i
+      end
+    elsif self.class == Array
       length.times do |i|
         return false unless yield(self[i])
       end
@@ -69,15 +73,31 @@ module Enumerable
       length.times do |i|
         return false unless yield(keys[i], self[keys[i]])
       end
+    elsif pattern.is_a? Regexp
+      length.times do |i|
+        return false unless i =~ pattern
+      end
+    elsif pattern.is_a? Class
+      length.times do |i|
+        return false unless i.is_a? pattern
+      end
+    elsif pattern
+      length.times do |i|
+        return false unless i == pattern
+      end
     end
     true
   end
+  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_any
-  def my_any?
-    return my_any? { |obj| obj } unless block_given?
-
-    if self.class == Array
+  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
+  def my_any?(pattern = nil)
+    if !block_given? && pattern.nil?
+      length.times do |i|
+        return true if i
+      end
+    elsif self.class == Array
       length.times do |i|
         return true if yield(self[i])
       end
@@ -86,15 +106,31 @@ module Enumerable
       keys.length.times do |i|
         return true if yield(keys[i], self[keys[i]])
       end
+    elsif pattern.is_a? Regexp
+      length.times do |i|
+        return true if i =~ pattern
+      end
+    elsif pattern.is_a? Class
+      length.times do |i|
+        return true if i.is_a? pattern
+      end
+    elsif pattern
+      length.times do |i|
+        return true if i == pattern
+      end
     end
     false
   end
+  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_none
-  def my_none?
-    return my_none? { |obj| obj } unless block_given?
-
-    if self.class == Array
+  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
+  def my_none?(pattern = nil)
+    if !block_given? && pattern.nil?
+      length.times do |i|
+        return false if i
+      end
+    elsif self.class == Array
       length.times do |i|
         return false if yield(self[i])
       end
@@ -103,9 +139,22 @@ module Enumerable
       keys.length.times do |i|
         return false if yield(keys[i], self[keys[i]])
       end
+    elsif pattern.is_a? Regexp
+      length.times do |i|
+        return false if i =~ pattern
+      end
+    elsif pattern.is_a? Class
+      length.times do |i|
+        return false if i.is_a? pattern
+      end
+    elsif pattern
+      length.times do |i|
+        return false if i == pattern
+      end
     end
     true
   end
+  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_count
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
@@ -134,7 +183,7 @@ module Enumerable
   # my_map
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_map(param = nil)
-    return my_map { |obj| obj } unless block_given?
+    return to_enum unless block_given?
 
     i = 0
     arr = []
@@ -151,17 +200,36 @@ module Enumerable
   # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_inject
+  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_inject(*initial)
     result = nil
-    arr = to_a
-    result = initial[0].nil? ? arr[0] : initial[0]
-    arr.shift if initial[0].nil?
-    arr.length.times do |i|
-      result = yield(result, arr[i])
+    if block_given?
+      arr = dup.to_a
+      result = initial[0].nil? ? arr[0] : initial[0]
+      arr.shift if initial[0].nil?
+      arr.length.times do |i|
+        result = yield(result, i)
+      end
+    elsif !block_given?
+      arr = dup.to_a
+      if initial[1].nil?
+        sym = initial[0]
+        result = arr[0]
+        arr[1..-1].my_each do |i|
+          result = result.send(sym, i)
+        end
+      elsif !initial[1].nil?
+        sym = initial[1]
+        result = initial[0]
+        arr.my_each do |i|
+          result = result.send(sym, i)
+        end
+      end
     end
     result
   end
 end
+# rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
 def multiply_els(arr)
   arr.my_inject(1) { |x, y| x * y }
