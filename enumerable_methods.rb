@@ -142,6 +142,20 @@ module Enumerable
     counter
   end
 
+  #my_map
+
+  def my_map
+    if !block_given?
+      return my_map { |obj| obj }
+    end
+    i = 0
+    arr = []
+    while i < self.size
+      arr << yield(self[i])
+      i += 1
+    end
+    arr
+  end
 
 end
 
