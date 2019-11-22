@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
-module Enumerable 
-
-  #my_each
+module Enumerable
+  # my_each
   def my_each
-    return self.to_enum unless block_given?
+    return .to_enum unless block_given?
     if self.class == Array
       i = 0
-      while i < self.length
+      while i < length
         yield(self[i])
         i += 1
       end
     elsif self.class == Hash
       keys = self.keys
-      keys.length.times do |i|
-        key = keys[i]
+      keys.length.times do |item|
+        key = keys[item]
         value = self[key]
         yield(key, value)
       end
@@ -22,72 +21,64 @@ module Enumerable
     self
   end
 
-  #my_each_with_index
-
+  # my_each_with_index
   def my_each_with_index
-    return self.to_enum unless block_given?
+    return to_enum unless block_given?
+
     if self.class == Array
       i = 0
-      while i < self.length
+      while i < length
         yield(self[i], i)
         i += 1
       end
     elsif self.class == Hash
       keys = self.keys
-      keys.length.times do |i|
-        key = keys[i]
+      keys.length.times do |item|
+        key = keys[item]
         value = self[key]
         key_value = [key, value]
-        yield(key_value, i)
+        yield(key_value, item)
       end
     end
     self
   end
 
-  #my_select
-
+  # my_select
   def my_select
-    return self.to_enum unless block_given?
+    return to_enum unless block_given?
+
     new_arr = []
     i = 0
-    while i < self.size
-      if yield(self[i])
-        new_arr << self[i]
-      end
+    while i < size
+      new_arr << self[i] if yield(self[i])
       i += 1
     end
     new_arr
   end
 
-  #my_all
-
+  # my_all
   def my_all?
-    if !block_given?
-      return self.my_all? { |obj| obj }
-    end
+    return my_all? { |obj| obj } unless block_given?
+
     if self.class == Array
-      length = self.size - 1
-      self.length.times do |i|
+      length.times do |i|
         return false unless yield(self[i])
       end
     elsif self.class == Hash
       keys = self.keys
-      self.length.times do |i|
+      length.times do |i|
         return false unless yield(keys[i], self[keys[i]])
       end
     end
     true
   end
 
-  #my_any
-
+  # my_any
   def my_any?
-    if !block_given?
-      return self.my_any? { |obj| obj }
-    end
+    return my_any? { |obj| obj } unless block_given?
+
     if self.class == Array
-      length = self.size
-      self.length.times do |i|
+      length.times do |i|
         return true if yield(self[i])
       end
     elsif self.class == Hash
@@ -99,15 +90,12 @@ module Enumerable
     false
   end
 
-  #my_none
-
+  # my_none
   def my_none?
-    if !block_given?
-      return self.my_none? { |obj| obj }
-    end
+    return my_none? { |obj| obj } unless block_given?
+
     if self.class == Array
-      length = self.size
-      self.length.times do |i|
+      length.times do |i|
         return false if yield(self[i])
       end
     elsif self.class == Hash
@@ -120,38 +108,38 @@ module Enumerable
   end
 
   # my_count
-
+  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_count(arg = nil)
     return length unless block_given? || !arg.nil?
 
     counter = 0
     if !arg.nil?
-      self.my_each do |i|
+      my_each do |i|
         counter += 1 if i == arg
       end
     elsif self.class == Array
-      self.my_each do |i|
+      my_each do |i|
         counter += 1 if yield(i)
       end
     elsif self.class == Hash
       keys = self.keys
-      self.my_each do |i|
+      my_each do |i|
         counter += 1 if yield(keys[i], self[keys[i]])
       end
     end
     counter
   end
+  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
-  #my_map
-
+  # my_map
+  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_map(param = nil)
-    if !block_given?
-      return my_map { |obj| obj }
-    end
+    return my_map { |obj| obj } unless block_given?
+
     i = 0
     arr = []
-    while i < self.size
-      if block_given? && param == nil
+    while i < size
+      if block_given? && param.nil?
         arr << yield(self[i])
       elsif block_given? && param
         arr << param.call(self[i])
@@ -160,24 +148,22 @@ module Enumerable
     end
     arr
   end
+  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
-  #my_inject
-
-  def my_inject *initial
+  # my_inject
+  def my_inject(*initial)
     result = nil
-    arr = self.to_a
+    arr = to_a
     result = initial[0].nil? ? arr[0] : initial[0]
     arr.shift if initial[0].nil?
-    length = arr.size - 1
     arr.length.times do |i|
       result = yield(result, arr[i])
     end
     result
   end
-
 end
 
 def multiply_els(arr)
   arr.my_inject(1) { |x, y| x * y }
 end
-puts multiply_els([2,4,5])
+puts multiply_els([2, 4, 5])
