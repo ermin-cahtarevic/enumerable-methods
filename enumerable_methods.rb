@@ -99,6 +99,25 @@ module Enumerable
     false
   end
 
+  #my_none
+
+  def my_none?
+    if !block_given?
+      return self.my_none? { |obj| obj }
+    end
+    if self.class == Array
+      length = self.size
+      self.length.times do |i|
+        return false if yield(self[i])
+      end
+    elsif self.class == Hash
+      keys = self.keys
+      keys.length.times do |i|
+        return false if yield(keys[i], self[keys[i]])
+      end
+    end
+    true
+  end
 
 
 end
