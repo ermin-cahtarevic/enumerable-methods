@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/CaseEquality
+
 module Enumerable
   # my_each
   def my_each
@@ -74,17 +76,9 @@ module Enumerable
       arr.my_each do |i|
         return false unless yield(keys[i], self[keys[i]])
       end
-    elsif pattern.is_a? Regexp
-      arr.my_each do |i|
-        return false unless i =~ pattern
-      end
-    elsif pattern.is_a? Class
-      arr.my_each do |i|
-        return false unless i.is_a? pattern
-      end
     elsif pattern
       arr.my_each do |i|
-        return false unless i == pattern
+        return false unless i === pattern
       end
     end
     true
@@ -108,17 +102,9 @@ module Enumerable
       arr.my_each do |i|
         return true if yield(keys[i], self[keys[i]])
       end
-    elsif pattern.is_a? Regexp
-      arr.my_each do |i|
-        return true if i =~ pattern
-      end
-    elsif pattern.is_a? Class
-      arr.my_each do |i|
-        return true if i.is_a? pattern
-      end
     elsif pattern
       arr.my_each do |i|
-        return true if i == pattern
+        return true if i === pattern
       end
     end
     false
@@ -142,22 +128,15 @@ module Enumerable
       arr.my_each do |i|
         return false if yield(keys[i], self[keys[i]])
       end
-    elsif pattern.is_a? Regexp
-      arr.my_each do |i|
-        return false if i =~ pattern
-      end
-    elsif pattern.is_a? Class
-      arr.my_each do |i|
-        return false if i.is_a? pattern
-      end
     elsif pattern
       arr.my_each do |i|
-        return false if i == pattern
+        return false if i === pattern
       end
     end
     true
   end
   # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
+  # rubocop:enable Style/CaseEquality
 
   # my_count
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
