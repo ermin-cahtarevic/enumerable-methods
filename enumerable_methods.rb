@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/CaseEquality
-
 module Enumerable
   # my_each
   def my_each
@@ -71,16 +69,15 @@ module Enumerable
       end
     elsif self.class == Array
       arr.my_each do |i|
-        return false unless yield(self[i])
+        return false unless yield(i)
       end
     elsif self.class == Hash
-      keys = self.keys
-      arr.my_each do |i|
-        return false unless yield(keys[i], self[keys[i]])
+      arr.my_each do |k, v|
+        return false unless yield(k, v)
       end
-    elsif pattern
+    else
       arr.my_each do |i|
-        return false unless i === pattern
+        return false unless check_arg(i, pattern)
       end
     end
     true
@@ -99,16 +96,15 @@ module Enumerable
       end
     elsif self.class == Array
       arr.my_each do |i|
-        return true if yield(self[i])
+        return true if yield(i)
       end
     elsif self.class == Hash
-      keys = self.keys
-      arr.my_each do |i|
-        return true if yield(keys[i], self[keys[i]])
+      arr.my_each do |k, v|
+        return true if yield(k, v)
       end
-    elsif pattern
+    else
       arr.my_each do |i|
-        return true if i === pattern
+        return true if check_arg(i, pattern)
       end
     end
     false
@@ -127,22 +123,20 @@ module Enumerable
       end
     elsif self.class == Array
       arr.my_each do |i|
-        return false if yield(self[i])
+        return false if yield(i)
       end
     elsif self.class == Hash
-      keys = self.keys
-      arr.my_each do |i|
-        return false if yield(keys[i], self[keys[i]])
+      arr.my_each do |k, v|
+        return false if yield(k, v)
       end
-    elsif pattern
+    else
       arr.my_each do |i|
-        return false if i === pattern
+        return false if check_arg(i, pattern)
       end
     end
     true
   end
   # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
-  # rubocop:enable Style/CaseEquality
 
   # my_count
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
