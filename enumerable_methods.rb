@@ -62,6 +62,8 @@ module Enumerable
   # my_all
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all?(pattern = nil)
+    return to_enum unless block_given?
+
     arr = self
     if !block_given? && pattern.nil?
       arr.my_each do |i|
@@ -88,6 +90,8 @@ module Enumerable
   # my_any
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_any?(pattern = nil)
+    return to_enum unless block_given?
+
     arr = self
     if !block_given? && pattern.nil?
       arr.my_each do |i|
@@ -114,6 +118,8 @@ module Enumerable
   # my_none
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_none?(pattern = nil)
+    return to_enum unless block_given?
+
     arr = self
     if !block_given? && pattern.nil?
       arr.my_each do |i|
