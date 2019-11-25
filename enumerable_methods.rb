@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/CaseEquality
+
 module Enumerable
   # my_each
   def my_each
@@ -77,7 +79,7 @@ module Enumerable
       end
     else
       arr.my_each do |i|
-        return false unless check_arg(i, pattern)
+        return false unless i === pattern
       end
     end
     true
@@ -104,7 +106,7 @@ module Enumerable
       end
     else
       arr.my_each do |i|
-        return true if check_arg(i, pattern)
+        return true if i === pattern
       end
     end
     false
@@ -131,12 +133,13 @@ module Enumerable
       end
     else
       arr.my_each do |i|
-        return false if check_arg(i, pattern)
+        return false if i === pattern
       end
     end
     true
   end
   # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
+  # rubocop:enable Style/CaseEquality
 
   # my_count
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
