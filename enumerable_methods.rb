@@ -41,85 +41,47 @@ module Enumerable
   end
 
   # my_all
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all?(pattern = nil)
-    return to_enum unless block_given?
-
-    arr = self
-    if !block_given? && pattern.nil?
-      arr.my_each do |i|
-        return false unless i
+    if pattern
+      my_each do |i|
+        return false unless pattern === i
       end
-    elsif self.class == Array
-      arr.my_each do |i|
+    elsif block_given?
+      my_each do |i|
         return false unless yield(i)
       end
-    elsif self.class == Hash
-      arr.my_each do |k, v|
-        return false unless yield(k, v)
-      end
     else
-      arr.my_each do |i|
-        return false unless i === pattern
+      my_each do |i|
+        return false unless i
       end
     end
+
     true
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_any
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_any?(pattern = nil)
-    return to_enum unless block_given?
-
-    arr = self
-    if !block_given? && pattern.nil?
-      arr.my_each do |i|
-        return true if i
+    if pattern
+      my_each do |i|
+        return true if pattern === i
       end
-    elsif self.class == Array
-      arr.my_each do |i|
+    elsif block_given?
+      my_each do |i|
         return true if yield(i)
       end
-    elsif self.class == Hash
-      arr.my_each do |k, v|
-        return true if yield(k, v)
-      end
     else
-      arr.my_each do |i|
-        return true if i === pattern
+      my_each do |i|
+        return true if i
       end
     end
+
     false
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_none
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
-  def my_none?(pattern = nil)
-    return to_enum unless block_given?
-
-    arr = self
-    if !block_given? && pattern.nil?
-      arr.my_each do |i|
-        return false if i
-      end
-    elsif self.class == Array
-      arr.my_each do |i|
-        return false if yield(i)
-      end
-    elsif self.class == Hash
-      arr.my_each do |k, v|
-        return false if yield(k, v)
-      end
-    else
-      arr.my_each do |i|
-        return false if i === pattern
-      end
-    end
-    true
+  def my_none?(pattern = nil, &block)
+    !my_any?(pattern, &block)
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   # rubocop:enable Style/CaseEquality
 
   # my_count
