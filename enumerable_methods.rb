@@ -85,47 +85,38 @@ module Enumerable
   # rubocop:enable Style/CaseEquality
 
   # my_count
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_count(arg = nil)
-    return length unless block_given? || !arg.nil?
-
     counter = 0
     if !arg.nil?
       my_each do |i|
         counter += 1 if i == arg
       end
-    elsif self.class == Array
+    elsif block_given?
       my_each do |i|
         counter += 1 if yield(i)
       end
-    elsif self.class == Hash
-      keys = self.keys
-      my_each do |i|
-        counter += 1 if yield(keys[i], self[keys[i]])
-      end
+    else
+      counter = length
     end
     counter
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_map
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_map(param = nil)
-    return to_enum unless block_given?
-
     i = 0
     arr = []
     while i < size
-      if block_given? && param.nil?
-        arr << yield(self[i])
-      elsif block_given? && param
+      if param
         arr << param.call(self[i])
+      elsif block_given?
+        arr << yield(self[i])
+      else
+        return to_enum
       end
       i += 1
     end
     arr
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_inject
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity

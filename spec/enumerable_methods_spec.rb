@@ -160,4 +160,54 @@ describe Enumerable do
       end
     end
   end
+
+  describe '#my_count' do
+    it 'returns length if no argument or block is given' do
+      expect([1, 2, 3, 4].my_count).to eql(4)
+    end
+
+    it 'returns the number of elements that are equal to the argument' do
+      expect([1, 2, 3, 2, 2].my_count(2)).to eql(3)
+    end
+
+    it 'returns the number of elements that yield true' do
+      expect([4, 5, 6, 7, 8].my_count { |x| x > 5 }).to eql(3)
+    end
+  end
+
+  describe '#my_map' do
+    it 'returns to enum if no argument and no block is passed' do
+      expect(arr.my_map).to be_an Enumerator
+    end
+
+    it 'returns new array containing the values returned from the block' do
+      expect(arr.my_map { |x| x * 2 }).to eql([2, 4, 6, 8])
+    end
+
+    it 'returns new array containing the values returned from the proc' do
+      expect(arr.my_map(proc { |i| i + 1 })).to eql([2, 3, 4, 5])
+    end
+  end
+
+  describe '#my_inject' do
+    context 'when no initial value is given as a parameter' do
+      it 'combines all the elements by aplying a binary operation specified by a block' do
+        expect(arr.my_inject { |sum, x| sum + x }).to eql(10)
+      end
+
+      it 'combines all the elements by aplying a named method specified by a symbol' do
+        expect(arr.my_inject(:+)).to eql(10)
+      end
+    end
+
+    context 'when an initial value is given as a parameter' do
+      it 'combines all the elements by aplying a binary operation specified by a block' do
+        expect(arr.my_inject(5) { |sum, x| sum + x }).to eql(15)
+      end
+
+      it 'combines all the elements by aplying a named method specified by a symbol' do
+        expect(arr.my_inject(5, :+)).to eql(15)
+      end
+    end
+  end
 end
