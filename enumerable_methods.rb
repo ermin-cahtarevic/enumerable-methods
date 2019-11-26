@@ -7,19 +7,10 @@ module Enumerable
   def my_each
     return to_enum unless block_given?
 
-    if self.class == Array
-      i = 0
-      while i < length
-        yield(self[i])
-        i += 1
-      end
-    elsif self.class == Hash
-      keys = self.keys
-      keys.length.times do |item|
-        key = keys[item]
-        value = self[key]
-        yield(key, value)
-      end
+    i = 0
+    while i < length
+      yield(self[i])
+      i += 1
     end
     self
   end
@@ -28,20 +19,10 @@ module Enumerable
   def my_each_with_index
     return to_enum unless block_given?
 
-    if self.class == Array
-      i = 0
-      while i < length
-        yield(self[i], i)
-        i += 1
-      end
-    elsif self.class == Hash
-      keys = self.keys
-      keys.length.times do |item|
-        key = keys[item]
-        value = self[key]
-        key_value = [key, value]
-        yield(key_value, item)
-      end
+    i = 0
+    while i < length
+      yield(self[i], i)
+      i += 1
     end
     self
   end
@@ -60,129 +41,82 @@ module Enumerable
   end
 
   # my_all
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all?(pattern = nil)
-    return to_enum unless block_given?
-
-    arr = self
-    if !block_given? && pattern.nil?
-      arr.my_each do |i|
-        return false unless i
+    if pattern
+      my_each do |i|
+        return false unless pattern === i
       end
-    elsif self.class == Array
-      arr.my_each do |i|
+    elsif block_given?
+      my_each do |i|
         return false unless yield(i)
       end
-    elsif self.class == Hash
-      arr.my_each do |k, v|
-        return false unless yield(k, v)
-      end
     else
-      arr.my_each do |i|
-        return false unless i === pattern
+      my_each do |i|
+        return false unless i
       end
     end
+
     true
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_any
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_any?(pattern = nil)
-    return to_enum unless block_given?
-
-    arr = self
-    if !block_given? && pattern.nil?
-      arr.my_each do |i|
-        return true if i
+    if pattern
+      my_each do |i|
+        return true if pattern === i
       end
-    elsif self.class == Array
-      arr.my_each do |i|
+    elsif block_given?
+      my_each do |i|
         return true if yield(i)
       end
-    elsif self.class == Hash
-      arr.my_each do |k, v|
-        return true if yield(k, v)
-      end
     else
-      arr.my_each do |i|
-        return true if i === pattern
+      my_each do |i|
+        return true if i
       end
     end
+
     false
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_none
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
-  def my_none?(pattern = nil)
-    return to_enum unless block_given?
-
-    arr = self
-    if !block_given? && pattern.nil?
-      arr.my_each do |i|
-        return false if i
-      end
-    elsif self.class == Array
-      arr.my_each do |i|
-        return false if yield(i)
-      end
-    elsif self.class == Hash
-      arr.my_each do |k, v|
-        return false if yield(k, v)
-      end
-    else
-      arr.my_each do |i|
-        return false if i === pattern
-      end
-    end
-    true
+  def my_none?(pattern = nil, &block)
+    !my_any?(pattern, &block)
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   # rubocop:enable Style/CaseEquality
 
   # my_count
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_count(arg = nil)
-    return length unless block_given? || !arg.nil?
-
     counter = 0
     if !arg.nil?
       my_each do |i|
         counter += 1 if i == arg
       end
-    elsif self.class == Array
+    elsif block_given?
       my_each do |i|
         counter += 1 if yield(i)
       end
-    elsif self.class == Hash
-      keys = self.keys
-      my_each do |i|
-        counter += 1 if yield(keys[i], self[keys[i]])
-      end
+    else
+      counter = length
     end
     counter
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_map
-  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_map(param = nil)
-    return to_enum unless block_given?
-
     i = 0
     arr = []
     while i < size
-      if block_given? && param.nil?
-        arr << yield(self[i])
-      elsif block_given? && param
+      if param
         arr << param.call(self[i])
+      elsif block_given?
+        arr << yield(self[i])
+      else
+        return to_enum
       end
       i += 1
     end
     arr
   end
-  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # my_inject
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
