@@ -7,19 +7,10 @@ module Enumerable
   def my_each
     return to_enum unless block_given?
 
-    if self.class == Array
-      i = 0
-      while i < length
-        yield(self[i])
-        i += 1
-      end
-    elsif self.class == Hash
-      keys = self.keys
-      keys.length.times do |item|
-        key = keys[item]
-        value = self[key]
-        yield(key, value)
-      end
+    i = 0
+    while i < length
+      yield(self[i])
+      i += 1
     end
     self
   end
@@ -28,20 +19,10 @@ module Enumerable
   def my_each_with_index
     return to_enum unless block_given?
 
-    if self.class == Array
-      i = 0
-      while i < length
-        yield(self[i], i)
-        i += 1
-      end
-    elsif self.class == Hash
-      keys = self.keys
-      keys.length.times do |item|
-        key = keys[item]
-        value = self[key]
-        key_value = [key, value]
-        yield(key_value, item)
-      end
+    i = 0
+    while i < length
+      yield(self[i], i)
+      i += 1
     end
     self
   end
