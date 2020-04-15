@@ -8,6 +8,21 @@
 
 - Ruby 
 
+## Usage
+
+Clone the repository to your machine and cd into the directory
+
+````
+$ git clone git@github.com:ermin-cahtarevic/enumerable-methods.git
+$ cd enumerable-methods
+````
+
+Run RSpec tests
+
+````
+$ rspec
+````
+
 ## Author
 
 👤 **Ermin Cahtarevic**
